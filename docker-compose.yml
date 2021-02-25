@@ -1,0 +1,98 @@
+version: '3'
+services:
+
+  web:
+    build: ./prism-web
+    image: prism-web
+    container_name: web
+    restart: always
+    environment:
+      DBPORT: 27017
+      DBHOST: 192.168.10.10
+      APIPORT: 4000
+      APIHOST: 192.168.10.20
+    ports:
+      - 3000:3000
+    networks:
+      backend:
+        ipv4_address: 192.168.10.100
+
+  api:
+    build: ./prism-api
+    image: prism-api
+    container_name: api
+    restart: always
+    environment:
+      PORT: 4000
+      HOST: 192.168.10.20
+    networks:
+      backend:
+        ipv4_address: 192.168.10.20
+
+  taskrunner:
+    build: ./prism-taskrunner
+    image: prism-taskrunner
+    container_name: taskrunner
+    restart: always
+    environment:
+      MINIO_ACCESS_KEY: AKIA_MINIO_ACCESS_KEY
+      MINIO_SECRET_KEY: minio_secret_key
+      MINIO_HOST: 192.168.10.30
+      MINIO_PORT: 9000
+      MINIO_BUCKET: mybucket
+      API_HOST: 192.168.10.20
+      API_PORT: 4000
+      WEB_HOST: 192.168.10.100
+      WEB_PORT: 3000
+    networks:
+      - backend
+
+  db:
+    image: mongo
+    container_name: db
+    restart: always
+    networks:
+      backend:
+        ipv4_address: 192.168.10.10
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - 9000:9000
+    environment:
+      MINIO_ACCESS_KEY: AKIA_MINIO_ACCESS_KEY
+      MINIO_SECRET_KEY: minio_secret_key
+    command: server /export
+    networks:
+      backend:
+        ipv4_address: 192.168.10.30
+      - minio
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc config host add myminio http://minio:9000 AKIA_MINIO_ACCESS_KEY minio_secret_key) do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb myminio/mybucket;
+      /usr/bin/mc policy download myminio/mybucket;
+      exit 0;
+      "
+    networks:
+      - minio
+
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/24
+
+  minio:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.30.0/24
