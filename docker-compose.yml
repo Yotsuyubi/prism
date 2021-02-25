@@ -64,9 +64,10 @@ services:
       MINIO_SECRET_KEY: minio_secret_key
     command: server /export
     networks:
+      minio:
+        
       backend:
         ipv4_address: 192.168.10.30
-      - minio
 
   createbuckets:
     image: minio/mc
