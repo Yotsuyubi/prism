@@ -15,6 +15,7 @@ services:
       MINIO_SECRET_KEY: minio_secret_key
       MINIO_HOST: 192.168.10.30
       MINIO_PORT: 9000
+      MINIO_BUCKET: mybucket
     ports:
       - 3000:3000
     networks:
