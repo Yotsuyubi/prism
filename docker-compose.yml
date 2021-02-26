@@ -11,6 +11,10 @@ services:
       DBHOST: 192.168.10.10
       APIPORT: 4000
       APIHOST: 192.168.10.20
+      MINIO_ACCESS_KEY: AKIA_MINIO_ACCESS_KEY
+      MINIO_SECRET_KEY: minio_secret_key
+      MINIO_HOST: 192.168.10.30
+      MINIO_PORT: 9000
     ports:
       - 3000:3000
     networks:
@@ -65,7 +69,6 @@ services:
     command: server /export
     networks:
       minio:
-        
       backend:
         ipv4_address: 192.168.10.30
 

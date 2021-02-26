@@ -41,6 +41,20 @@ def get_info(id):
         j = json.load(res)
     return j
 
+def processing(id):
+    url = 'http://{}:{}/api/collections/{}/processing'.format(WEB_HOST, WEB_PORT, id)
+    req = urllib.request.Request(url, method="PUT")
+    with urllib.request.urlopen(req) as res:
+        j = json.load(res)
+    return j
+
+def finish(id):
+    url = 'http://{}:{}/api/collections/{}/finished'.format(WEB_HOST, WEB_PORT, id)
+    req = urllib.request.Request(url, method="PUT")
+    with urllib.request.urlopen(req) as res:
+        j = json.load(res)
+    return j
+
 def separate(ytid):
     url = 'http://{}:{}/separate/{}'.format(API_HOST, API_PORT, ytid)
     req = urllib.request.Request(url, method="POST")
@@ -73,9 +87,11 @@ def main():
 
 
 def run(id):
+    processing(id)
     ytid = get_info(id)["ytid"]
     data = separate(ytid)
     res = put_zip(data, id)
+    finish(id)
     return res
 
 
