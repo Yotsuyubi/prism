@@ -2,12 +2,12 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
 interface CueDocInterface extends mongoose.Document {
-  collection_id: mongoose.Schema.Types.ObjectId;
+  collection_id: string;
 }
 
 
 const CueSchema = new Schema<CueDocInterface>({
-  collection_id: { type: Schema.Types.ObjectId, required: true },
+  collection_id: { type: String, required: true },
 })
 
 

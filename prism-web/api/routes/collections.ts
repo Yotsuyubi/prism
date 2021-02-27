@@ -16,18 +16,23 @@ const router: Router = Router()
 
 
 router.use('/collections/:id/*', async (req, res, next) => {
+
   try {
-    if (!await Collection.exists({ _id: req.params.id }))
-    {
-      res.status(404).json({ 'msg': 'id not found.' })
+
+    if (!await Collection.exists({ _id: req.params.id })) {
+      res.status(400).json({ 'msg': 'id not found.' })
     }
     else {
       next()
     }
+
   }
   catch(err) {
+
     res.status(500).json({ 'msg': err })
+
   }
+
 })
 
 
@@ -53,8 +58,9 @@ router.get('/collections/:id/zip', async (req, res, _next) => {
         "msg": err
       })
     }
-
-    dataStream.pipe(res)
+    else {
+      dataStream.pipe(res)
+    }
 
   })
 
@@ -96,6 +102,7 @@ router.post('/collections/:ytid', async (req, res, _next) => {
   }
 
   else {
+
     try {
       const videoInfo = await axios.get(`http://${process.env.APIHOST}:${process.env.APIPORT}/${ytid}/info`)
       const id = await Collection.addByYtid(ytid, videoInfo.data.title)
@@ -107,6 +114,36 @@ router.post('/collections/:ytid', async (req, res, _next) => {
         "msg": "no video found."
       })
     }
+
+  }
+
+})
+
+
+router.delete('/collections/:id', async (req, res, _next) => {
+
+  const id = req.params.id
+  const doc = await Collection.findById(id)
+
+  if (!doc || doc.isProcessing) {
+    res.status(400).json({ "msg": "processing item cannot be removed." })
+  }
+  else {
+
+    if (doc.isFinished) {
+      try {
+        await minioClient.removeObject(String(process.env.MINIO_BUCKET), id)
+      }
+      catch (err) {
+        res.status(500).json({ "msg": err })
+      }
+    }
+
+    await Collection.deleteOne({ _id: id })
+    await Cue.deleteOne({ collection_id: id })
+
+    res.status(200).json({ "msg": "ok." })
+
   }
 
 })
