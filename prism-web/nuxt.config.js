@@ -56,7 +56,12 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: `http://${process.env.WEB_HOST}:${process.env.WEB_PORT}`,
+    // baseURL: `http://${process.env.WEB_HOST}:${process.env.WEB_PORT}`,
+    headers: {
+      common: {
+        'Access-Control-Allow-Origin': '*'
+      }
+    }
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

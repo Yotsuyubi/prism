@@ -11,16 +11,18 @@
   "dependencies": {
     "@nuxt/typescript-runtime": "^2.0.1",
     "@nuxtjs/axios": "^5.12.5",
+    "@types/cors": "^2.8.10",
+    "@types/minio": "^7.0.7",
     "axios": "^0.21.1",
     "core-js": "^3.8.3",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "minio": "^7.0.18",
     "mongoose": "^5.11.18",
     "nuxt": "^2.14.12",
-    "nuxt-buefy": "^0.4.4",
-    "@types/minio": "^7.0.7"
+    "nuxt-buefy": "^0.4.4"
   },
   "devDependencies": {
     "@nuxt/types": "^2.14.12",

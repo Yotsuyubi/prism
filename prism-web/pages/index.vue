@@ -53,13 +53,13 @@ export default {
 
   methods: {
     async fetchCollections() {
-      const collections = await this.$axios.$get('api/collections')
+      const collections = await this.$axios.$get(`http://${window.location.hostname}:3000/api/collections`)
       this.collections = collections
     },
 
     async request() {
       if (this.youtubeId) {
-        await this.$axios.$post(`api/collections/${this.youtubeId}`)
+        await this.$axios.$post(`http://${window.location.hostname}:3000/api/collections/${this.youtubeId}`)
         this.youtubeUrl = null
         this.update()
       }

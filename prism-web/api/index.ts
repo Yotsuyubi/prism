@@ -1,8 +1,12 @@
 import express from 'express'
 import { collections } from './routes/collections'
 import { cues } from './routes/cues'
+import cors from 'cors'
 
 const app: express.Express = express()
+
+
+app.use(cors())
 
 app.use(collections)
 app.use(cues)

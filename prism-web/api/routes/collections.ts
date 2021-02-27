@@ -51,6 +51,8 @@ router.get('/collections/:id/zip', async (req, res, _next) => {
 
   const id = req.params.id
 
+  res.set('Content-Type', 'application/zip')
+
   minioClient.getObject(String(process.env.MINIO_BUCKET), id, function(err, dataStream) {
 
     if (err) {
@@ -60,6 +62,14 @@ router.get('/collections/:id/zip', async (req, res, _next) => {
     }
     else {
       dataStream.pipe(res)
+
+      dataStream.on('error', (err) => {
+        res.destroy(err)
+      })
+
+      dataStream.on('end', () => {
+        res.status(200).end()
+      })
     }
 
   })

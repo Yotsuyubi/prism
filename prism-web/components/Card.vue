@@ -11,7 +11,7 @@
       <div class="card-content">
         <b-button v-if="isFinished" type="is-success" @click="downloadItem">
           Download
-          <!-- <b-loading :is-full-page="false" v-model="isDownloading" :can-cancel="false" /> -->
+          <b-loading :is-full-page="false" v-model="isDownloading" :can-cancel="false" />
         </b-button>
         <b-button type="is-danger" @click="deleteItem"> Delete </b-button>
         <b-loading :is-full-page="false" v-model="isProcessing" :can-cancel="false"></b-loading>
@@ -37,12 +37,12 @@ export default {
 
   methods: {
     async downloadItem() {
-      // this.isDownloading = true
-      const blob = await this.$axios.$get(`api/collections/${this._id}/zip`,{
+      this.isDownloading = true
+      const blob = await this.$axios.$get(`http://${window.location.hostname}:3000/api/collections/${this._id}/zip`,{
         responseType: 'blob',
         headers: { Accept: 'application/zip' },
       })
-      // this.isDownloading = false
+      this.isDownloading = false
       const uri = URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.download = `${this.title}.zip`
@@ -51,7 +51,7 @@ export default {
     },
 
     async deleteItem() {
-      await this.$axios.$delete(`api/collections/${this._id}`)
+      await this.$axios.$delete(`http://${window.location.hostname}:3000/api/collections/${this._id}`)
       this.$emit('update')
     },
   }
